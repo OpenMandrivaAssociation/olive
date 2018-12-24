@@ -7,7 +7,7 @@ Summary:        Olive is a free non-linear video editor for Windows, macOS, and 
 License:        GPL3
 Group:          Video
 URL:            https://www.olivevideoeditor.org/
-Source0:        https://github.com/olive-editor/%{name}/archive/%{snap}.tar.gz
+Source0:        https://github.com/olive-editor/%{name}/archive/%{snap}/%{name}-%{snap}.tar.gz
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  desktop-file-utils
