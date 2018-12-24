@@ -26,7 +26,7 @@ Olive is a free non-linear video editor for Windows, macOS, and Linux.
 %setup -q -n %{name}-%{snap}
 
 %build
-qmake olive.pro
+%qmake5 olive.pro
 
 %make_build
 
