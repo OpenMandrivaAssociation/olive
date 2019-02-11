@@ -38,7 +38,7 @@ Olive is a free non-linear video editor for Windows, macOS, and Linux.
 
 %install
 
-%make_install
+%make_install DESTDIR=%{buildroot}
 
 %files
 #{_bindir}/*
