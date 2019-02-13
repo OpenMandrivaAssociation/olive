@@ -13,6 +13,7 @@ URL:            https://www.olivevideoeditor.org/
 #Source0:        https://github.com/olive-editor/%{name}/archive/%{snap}/%{name}-%{snap}.tar.gz
 #Source0:        https://github.com/olive-editor/olive/archive/continuous/olive-continuous.tar.gz
 Source0:        %{name}-%{unstable}-%{date}.tar.gz
+Patch0:         olive-fix-install-dir.patch
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
 BuildRequires:  desktop-file-utils
@@ -31,6 +32,7 @@ Olive is a free non-linear video editor for Windows, macOS, and Linux.
 
 %prep
 %setup -q -n %{name}-%{unstable}
+%autopatch -p0
 
 %build
 %qmake_qt5
