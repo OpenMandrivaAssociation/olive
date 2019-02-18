@@ -1,4 +1,3 @@
-%define snap 20181223
 %define unstable continuous
 %define date 11.02.2019
 
@@ -10,7 +9,6 @@ Summary:        Olive is a free non-linear video editor for Windows, macOS, and 
 License:        GPL3
 Group:          Video
 URL:            https://www.olivevideoeditor.org/
-#Source0:        https://github.com/olive-editor/%{name}/archive/%{snap}/%{name}-%{snap}.tar.gz
 #Source0:        https://github.com/olive-editor/olive/archive/continuous/olive-continuous.tar.gz
 Source0:        %{name}-%{unstable}-%{date}.tar.gz
 
@@ -43,4 +41,9 @@ mkdir -p %{buildroot}%{_bindir}
 
 
 %files
-#{_bindir}/*
+%{_bindir}/%{name}-editor
+%{_datadir}/applications/org.olivevideoeditor.Olive.desktop
+%{_iconsdir}/hicolor/*/apps/org.olivevideoeditor.Olive.png
+%{_datadir}/metainfo/org.olivevideoeditor.Olive.appdata.xml
+%{_datadir}/mime/packages/org.olivevideoeditor.Olive.xml
+%{_datadir}/olive-editor/effects/*
