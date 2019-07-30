@@ -1,9 +1,9 @@
 %define unstable continuous
-%define date 11.02.2019
+%define date 07.05.2019
 
 
 Name:           olive
-Version:        0.2019.02.11
+Version:        0.2019.05.07
 Release:        1
 Summary:        Olive is a free non-linear video editor for Windows, macOS, and Linux.
 License:        GPL3
