@@ -1,9 +1,9 @@
 %define unstable continuous
-%define date 11.02.2019
+%define date 07.05.2019
 
 
 Name:           olive
-Version:        0.2019.02.11
+Version:        0.2019.05.07
 Release:        1
 Summary:        Olive is a free non-linear video editor for Windows, macOS, and Linux.
 License:        GPL3
@@ -14,6 +14,7 @@ Source0:        %{name}-%{unstable}-%{date}.tar.gz
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
+BuildRequires:  pkgconfig(Qt5Svg)
 BuildRequires:  desktop-file-utils
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  pkgconfig(GraphicsMagick)
@@ -24,6 +25,7 @@ BuildRequires:  pkgconfig(Qt5MultimediaWidgets)
 BuildRequires:  pkgconfig(Qt5OpenGL)
 BuildRequires:  ffmpeg-devel
 BuildRequires:  pkgconfig(frei0r)
+BuildRequires:  pkgconfig(OpenColorIO)
 
 %description
 Olive is a free non-linear video editor for Windows, macOS, and Linux.
@@ -44,6 +46,7 @@ mkdir -p %{buildroot}%{_bindir}
 %{_bindir}/%{name}-editor
 %{_datadir}/applications/org.olivevideoeditor.Olive.desktop
 %{_iconsdir}/hicolor/*/apps/org.olivevideoeditor.Olive.png
+%{_iconsdir}/hicolor/*x*/mimetypes/application-vnd.olive-project.png
 %{_datadir}/metainfo/org.olivevideoeditor.Olive.appdata.xml
 %{_datadir}/mime/packages/org.olivevideoeditor.Olive.xml
 %{_datadir}/olive-editor/effects/*
