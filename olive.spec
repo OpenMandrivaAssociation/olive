@@ -14,6 +14,7 @@ Source0:        %{name}-%{unstable}-%{date}.tar.gz
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
+BuildRequires:  pkgconfig(Qt5Svg)
 BuildRequires:  desktop-file-utils
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  pkgconfig(GraphicsMagick)
