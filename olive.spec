@@ -46,6 +46,7 @@ mkdir -p %{buildroot}%{_bindir}
 %{_bindir}/%{name}-editor
 %{_datadir}/applications/org.olivevideoeditor.Olive.desktop
 %{_iconsdir}/hicolor/*/apps/org.olivevideoeditor.Olive.png
+%{_iconsdir}/hicolor/*x*/mimetypes/application-vnd.olive-project.png
 %{_datadir}/metainfo/org.olivevideoeditor.Olive.appdata.xml
 %{_datadir}/mime/packages/org.olivevideoeditor.Olive.xml
 %{_datadir}/olive-editor/effects/*
