@@ -1,16 +1,16 @@
-%define unstable continuous
-%define date 07.05.2019
+%define unstable master
+%define date 2021.09.01
 
 
 Name:           olive
-Version:        0.2019.05.07
+Version:        0.%{date}
 Release:        1
 Summary:        Olive is a free non-linear video editor for Windows, macOS, and Linux.
 License:        GPL3
 Group:          Video
 URL:            https://www.olivevideoeditor.org/
 #Source0:        https://github.com/olive-editor/olive/archive/continuous/olive-continuous.tar.gz
-Source0:        %{name}-%{unstable}-%{date}.tar.gz
+Source0:        https://github.com/olive-editor/olive/archive/refs/heads/olive-master.tar.gz
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
