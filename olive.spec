@@ -27,7 +27,8 @@ BuildRequires:  ffmpeg-devel
 BuildRequires:  pkgconfig(frei0r)
 BuildRequires:  pkgconfig(OpenColorIO)
 BuildRequires:  cmake(OpenImageIO)
-BuildRequires:  cmake(OpenEXR)
+BuildRequires:  pkgconfig(OpenEXR)
+BuildRequires:  pkgconfig(Imath)
 
 %description
 Olive is a free non-linear video editor for Windows, macOS, and Linux.
