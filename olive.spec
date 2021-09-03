@@ -14,6 +14,8 @@ Source0:        https://github.com/olive-editor/olive/archive/refs/heads/olive-m
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
+BuildRequires:  qt5-linguist
+BuildRequires:  cmake(Qt5LinguistTools)
 BuildRequires:  pkgconfig(Qt5Svg)
 BuildRequires:  desktop-file-utils
 BuildRequires:  hicolor-icon-theme
