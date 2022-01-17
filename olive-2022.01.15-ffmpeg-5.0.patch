@@ -1,0 +1,141 @@
+diff -up olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegdecoder.cpp.omv~ olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegdecoder.cpp
+--- olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegdecoder.cpp.omv~	2022-01-17 19:59:32.798341198 +0100
++++ olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegdecoder.cpp	2022-01-17 19:59:41.340393194 +0100
+@@ -268,7 +268,7 @@ FootageDescription FFmpegDecoder::Probe(
+       AVStream* avstream = fmt_ctx->streams[i];
+ 
+       // Find decoder for this stream, if it exists we can proceed
+-      AVCodec* decoder = avcodec_find_decoder(avstream->codecpar->codec_id);
++      const AVCodec* decoder = avcodec_find_decoder(avstream->codecpar->codec_id);
+ 
+       if (decoder
+           && (avstream->codecpar->codec_type == AVMEDIA_TYPE_VIDEO
+@@ -1010,7 +1010,7 @@ bool FFmpegDecoder::Instance::Open(const
+   avstream_ = fmt_ctx_->streams[stream_index];
+ 
+   // Find decoder
+-  AVCodec* codec = avcodec_find_decoder(avstream_->codecpar->codec_id);
++  const AVCodec* codec = avcodec_find_decoder(avstream_->codecpar->codec_id);
+ 
+   // Handle failure to find decoder
+   if (codec == nullptr) {
+diff -up olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegencoder.cpp.omv~ olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegencoder.cpp
+--- olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegencoder.cpp.omv~	2022-01-17 20:00:40.541753587 +0100
++++ olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegencoder.cpp	2022-01-17 20:05:21.473464329 +0100
+@@ -22,6 +22,7 @@
+ 
+ extern "C" {
+ #include <libavutil/pixdesc.h>
++#include <libavcodec/avcodec.h>
+ }
+ 
+ #include <QFile>
+@@ -50,7 +51,7 @@ QStringList FFmpegEncoder::GetPixelForma
+ {
+   QStringList pix_fmts;
+ 
+-  AVCodec* codec_info = GetEncoder(c);
++  const AVCodec* codec_info = GetEncoder(c);
+ 
+   if (codec_info) {
+     for (int i=0; codec_info->pix_fmts[i]!=-1; i++) {
+@@ -570,7 +571,7 @@ bool FFmpegEncoder::InitializeStream(AVM
+   }
+ 
+   // Find encoder
+-  AVCodec* encoder = GetEncoder(codec);
++  const AVCodec* encoder = GetEncoder(codec);
+   if (!encoder) {
+     SetError(tr("Failed to find codec for 0x%1").arg(codec, 16));
+     return false;
+@@ -669,7 +670,7 @@ bool FFmpegEncoder::InitializeStream(AVM
+   return true;
+ }
+ 
+-bool FFmpegEncoder::InitializeCodecContext(AVStream **stream, AVCodecContext **codec_ctx, AVCodec* codec)
++bool FFmpegEncoder::InitializeCodecContext(AVStream **stream, AVCodecContext **codec_ctx, const AVCodec* codec)
+ {
+   *stream = avformat_new_stream(fmt_ctx_, nullptr);
+   if (!(*stream)) {
+@@ -687,7 +688,7 @@ bool FFmpegEncoder::InitializeCodecConte
+   return true;
+ }
+ 
+-bool FFmpegEncoder::SetupCodecContext(AVStream* stream, AVCodecContext* codec_ctx, AVCodec* codec)
++bool FFmpegEncoder::SetupCodecContext(AVStream* stream, AVCodecContext* codec_ctx, const AVCodec* codec)
+ {
+   int error_code;
+ 
+@@ -833,7 +834,7 @@ bool FFmpegEncoder::InitializeResampleCo
+   return true;
+ }
+ 
+-AVCodec *FFmpegEncoder::GetEncoder(ExportCodec::Codec c)
++const AVCodec *FFmpegEncoder::GetEncoder(ExportCodec::Codec c)
+ {
+   switch (c) {
+   case ExportCodec::kCodecH264:
+diff -up olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegencoder.h.omv~ olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegencoder.h
+--- olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegencoder.h.omv~	2022-01-17 20:03:26.122761803 +0100
++++ olive-continuous-0.2022.01.15/app/codec/ffmpeg/ffmpegencoder.h	2022-01-17 20:05:08.734386738 +0100
+@@ -69,15 +69,15 @@ private:
+   bool WriteAVFrame(AVFrame* frame, AVCodecContext *codec_ctx, AVStream *stream);
+ 
+   bool InitializeStream(enum AVMediaType type, AVStream** stream, AVCodecContext** codec_ctx, const ExportCodec::Codec &codec);
+-  bool InitializeCodecContext(AVStream** stream, AVCodecContext** codec_ctx, AVCodec* codec);
+-  bool SetupCodecContext(AVStream *stream, AVCodecContext *codec_ctx, AVCodec *codec);
++  bool InitializeCodecContext(AVStream** stream, AVCodecContext** codec_ctx, const AVCodec* codec);
++  bool SetupCodecContext(AVStream *stream, AVCodecContext *codec_ctx, const AVCodec *codec);
+ 
+   void FlushEncoders();
+   void FlushCodecCtx(AVCodecContext* codec_ctx, AVStream *stream);
+ 
+   bool InitializeResampleContext(SampleBufferPtr audio);
+ 
+-  static AVCodec *GetEncoder(ExportCodec::Codec c);
++  static const AVCodec *GetEncoder(ExportCodec::Codec c);
+ 
+   AVFormatContext* fmt_ctx_;
+ 
+diff -up olive-continuous-0.2022.01.15/app/common/ffmpegutils.cpp.omv~ olive-continuous-0.2022.01.15/app/common/ffmpegutils.cpp
+--- olive-continuous-0.2022.01.15/app/common/ffmpegutils.cpp.omv~	2022-01-17 20:05:54.295664247 +0100
++++ olive-continuous-0.2022.01.15/app/common/ffmpegutils.cpp	2022-01-17 20:06:07.032741830 +0100
+@@ -20,6 +20,10 @@
+ 
+ #include "common/ffmpegutils.h"
+ 
++extern "C" {
++#include <libavcodec/avcodec.h>
++}
++
+ namespace olive {
+ 
+ AVPixelFormat FFmpegUtils::GetCompatiblePixelFormat(const AVPixelFormat &pix_fmt)
+diff -up olive-continuous-0.2022.01.15/app/dialog/sequence/sequencedialogpresettab.cpp.omv~ olive-continuous-0.2022.01.15/app/dialog/sequence/sequencedialogpresettab.cpp
+--- olive-continuous-0.2022.01.15/app/dialog/sequence/sequencedialogpresettab.cpp.omv~	2022-01-17 20:02:51.344550015 +0100
++++ olive-continuous-0.2022.01.15/app/dialog/sequence/sequencedialogpresettab.cpp	2022-01-17 20:03:03.752625575 +0100
+@@ -35,6 +35,10 @@
+ #include "ui/icons/icons.h"
+ #include "widget/menu/menu.h"
+ 
++extern "C" {
++#include <libavutil/channel_layout.h>
++}
++
+ namespace olive {
+ 
+ const int kDataIsPreset = Qt::UserRole;
+diff -up olive-continuous-0.2022.01.15/app/render/audioparams.h.omv~ olive-continuous-0.2022.01.15/app/render/audioparams.h
+--- olive-continuous-0.2022.01.15/app/render/audioparams.h.omv~	2022-01-17 19:58:36.360997686 +0100
++++ olive-continuous-0.2022.01.15/app/render/audioparams.h	2022-01-17 19:58:49.198075816 +0100
+@@ -27,6 +27,10 @@
+ 
+ #include "common/rational.h"
+ 
++extern "C" {
++#include <libavutil/channel_layout.h>
++}
++
+ namespace olive {
+ 
+ class AudioParams {

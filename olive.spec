@@ -11,6 +11,7 @@ Group:          Video
 URL:            https://www.olivevideoeditor.org/
 #Source0:        https://github.com/olive-editor/olive/archive/continuous/olive-continuous.tar.gz
 Source0:        %{name}-%{unstable}-%{version}.tar.xz
+Patch0:		olive-2022.01.15-ffmpeg-5.0.patch
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
@@ -34,20 +35,14 @@ BuildRequires:	pkgconfig(portaudio-2.0)
 Olive is a free non-linear video editor for Windows, macOS, and Linux.
 
 %prep
-%setup -q -n %{name}-%{unstable}-%{version}
+%autosetup -p1 -n %{name}-%{unstable}-%{version}
+%cmake -G Ninja
 
 %build
-%cmake
-
-#%%qmake_qt5 PREFIX=/usr
-
-%make_build
+%ninja_build -C build
 
 %install
-mkdir -p %{buildroot}%{_bindir}
-cd build
-%make_install  INSTALL_ROOT=%{buildroot}
-
+%ninja_install -C build
 
 %files
 %{_bindir}/%{name}-editor
@@ -56,4 +51,3 @@ cd build
 %{_iconsdir}/hicolor/*x*/mimetypes/application-vnd.olive-project.png
 %{_datadir}/metainfo/org.olivevideoeditor.Olive.appdata.xml
 %{_datadir}/mime/packages/org.olivevideoeditor.Olive.xml
-#%%{_datadir}/olive-editor/effects/*
