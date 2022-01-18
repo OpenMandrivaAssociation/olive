@@ -29,6 +29,7 @@ BuildRequires:  pkgconfig(frei0r)
 BuildRequires:  pkgconfig(OpenColorIO)
 BuildRequires:	pkgconfig(OpenImageIO)
 BuildRequires:	pkgconfig(portaudio-2.0)
+BuildRequires:	pkgconfig(OpenEXR)
 
 
 %description
