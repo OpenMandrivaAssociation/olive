@@ -31,6 +31,7 @@ BuildRequires:  pkgconfig(OpenColorIO)
 BuildRequires:	pkgconfig(OpenImageIO)
 BuildRequires:	pkgconfig(portaudio-2.0)
 BuildRequires:	pkgconfig(OpenEXR)
+BuildRequires:	pkgconfig(libglvnd)
 BuildRequires:	cmake ninja
 
 %description
