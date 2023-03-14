@@ -1,0 +1,12 @@
+diff -up olive-20230312/ext/core/CMakeLists.txt.omv~ olive-20230312/ext/core/CMakeLists.txt
+--- olive-20230312/ext/core/CMakeLists.txt.omv~	2023-03-14 19:42:14.128067520 +0100
++++ olive-20230312/ext/core/CMakeLists.txt	2023-03-14 19:42:22.458121508 +0100
+@@ -40,7 +40,7 @@ if(UNIX AND NOT APPLE AND NOT DEFINED Op
+ endif()
+ find_package(OpenGL REQUIRED)
+ 
+-add_library(olivecore
++add_library(olivecore STATIC
+   src/render/audioparams.cpp
+   src/render/samplebuffer.cpp
+   src/util/bezier.cpp
