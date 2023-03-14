@@ -11,7 +11,6 @@ Group:          Video
 URL:            https://www.olivevideoeditor.org/
 #Source0:        https://github.com/olive-editor/olive/archive/continuous/olive-continuous.tar.gz
 Source0:        %{name}-%{date}.tar.xz
-Patch0:		olive-2022.01.15-ffmpeg-5.0.patch
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
