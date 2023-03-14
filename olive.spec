@@ -23,6 +23,7 @@ BuildRequires:  rpm-helper
 BuildRequires:  pkgconfig(Qt5Multimedia)
 BuildRequires:  pkgconfig(Qt5MultimediaWidgets)
 BuildRequires:  pkgconfig(Qt5OpenGL)
+BuildRequires:  pkgconfig(Qt5X11Extras)
 BuildRequires:	cmake(Qt5LinguistTools)
 BuildRequires:  ffmpeg-devel
 BuildRequires:  pkgconfig(frei0r)
