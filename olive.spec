@@ -39,7 +39,7 @@ BuildRequires:	cmake ninja
 Olive is a free non-linear video editor for Windows, macOS, and Linux.
 
 %prep
-%autosetup -p1 -n %{name}-%{unstable}
+%autosetup -p1 -n %{name}-%{date}
 %cmake -G Ninja
 
 %build
