@@ -1,16 +1,16 @@
 %define unstable continuous
-%define date 12.01.2022
+%define date 20230312
 
 
 Name:           olive
-Version:        0.2022.01.15
-Release:        4
+Version:        0.2023.03.12
+Release:        1
 Summary:        Olive is a free non-linear video editor for Windows, macOS, and Linux.
 License:        GPL3
 Group:          Video
 URL:            https://www.olivevideoeditor.org/
 #Source0:        https://github.com/olive-editor/olive/archive/continuous/olive-continuous.tar.gz
-Source0:        %{name}-%{unstable}-%{version}.tar.xz
+Source0:        %{name}-%{date}.tar.xz
 Patch0:		olive-2022.01.15-ffmpeg-5.0.patch
 
 BuildRequires:  qt5-devel
@@ -39,7 +39,7 @@ BuildRequires:	cmake ninja
 Olive is a free non-linear video editor for Windows, macOS, and Linux.
 
 %prep
-%autosetup -p1 -n %{name}-%{unstable}-%{version}
+%autosetup -p1 -n %{name}-%{unstable}
 %cmake -G Ninja
 
 %build
