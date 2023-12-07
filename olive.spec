@@ -1,16 +1,18 @@
-%define unstable continuous
-%define date 20230312
+%define branch master
 
 
 Name:           olive
-Version:        0.2023.03.12
-Release:        4
+Version:        0.2023.12.07
+Release:        1
 Summary:        Olive is a free non-linear video editor for Windows, macOS, and Linux.
 License:        GPL3
 Group:          Video
 URL:            https://www.olivevideoeditor.org/
-#Source0:        https://github.com/olive-editor/olive/archive/continuous/olive-continuous.tar.gz
-Source0:        %{name}-%{date}.tar.xz
+Source0:        https://github.com/olive-editor/olive/archive/refs/heads/%{branch}.tar.gz#/%{name}-%{version}.tar.gz
+# Keep the submodules at the versions shown at
+# https://github.com/olive-editor/olive/tree/master/ext
+Source1:	https://github.com/olive-editor/KDDockWidgets/archive/8d2d0a5764f8393cc148a2296d511276a8ffe559.tar.gz
+Source2:	https://github.com/olive-editor/core/archive/277792824801495e868580ca86f6e7a1b53e4779.tar.gz
 Patch0:		olive-20230312-static-helper.patch
 
 BuildRequires:  qt5-devel
@@ -40,7 +42,13 @@ BuildRequires:	cmake ninja
 Olive is a free non-linear video editor for Windows, macOS, and Linux.
 
 %prep
-%autosetup -p1 -n %{name}-%{date}
+%setup -n %{name}-%{branch}
+tar xf %{S:1}
+tar xf %{S:2}
+rmdir ext/KDDockWidgets ext/core
+mv KDDockWidgets* ext/KDDockWidgets
+mv core* ext/core
+%autopatch -p1
 %cmake -G Ninja
 
 %build
