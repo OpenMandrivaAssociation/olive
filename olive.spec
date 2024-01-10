@@ -2,7 +2,7 @@
 
 
 Name:           olive
-Version:        20181223
+Version:        0.2024.01.10
 Release:        1
 Summary:        Olive is a free non-linear video editor for Windows, macOS, and Linux.
 License:        GPL3
