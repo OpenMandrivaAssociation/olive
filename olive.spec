@@ -15,6 +15,7 @@ Source1:	https://github.com/olive-editor/KDDockWidgets/archive/8d2d0a5764f8393cc
 Source2:	https://github.com/olive-editor/core/archive/277792824801495e868580ca86f6e7a1b53e4779.tar.gz
 Patch0:		olive-20230312-static-helper.patch
 Patch1:		core-ffmpeg7.patch
+Patch2:		olive-ffmpeg7.patch
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel

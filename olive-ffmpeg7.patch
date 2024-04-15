@@ -1,0 +1,140 @@
+--- olive-master/app/codec/ffmpeg/ffmpegdecoder.cpp.orig	2024-04-15 15:01:06.500855636 +0100
++++ olive-master/app/codec/ffmpeg/ffmpegdecoder.cpp	2024-04-15 15:50:58.222152805 +0100
+@@ -355,8 +355,8 @@
+               // Read first frame and retrieve some metadata
+               if (instance.GetFrame(pkt, frame) >= 0) {
+                 // Check if video is interlaced and what field dominance it has if so
+-                if (frame->interlaced_frame) {
+-                  if (frame->top_field_first) {
++                if (frame->flags & AV_FRAME_FLAG_INTERLACED) {
++                  if (frame->flags & AV_FRAME_FLAG_TOP_FIELD_FIRST) {
+                     interlacing = VideoParams::kInterlacedTopFirst;
+                   } else {
+                     interlacing = VideoParams::kInterlacedBottomFirst;
+@@ -439,9 +439,12 @@
+         } else if (avstream->codecpar->codec_type == AVMEDIA_TYPE_AUDIO) {
+ 
+           // Create an audio stream object
+-          uint64_t channel_layout = avstream->codecpar->channel_layout;
++          uint64_t channel_layout = avstream->codecpar->ch_layout.u.mask;
+           if (!channel_layout) {
+-            channel_layout = static_cast<uint64_t>(av_get_default_channel_layout(avstream->codecpar->channels));
++
++            AVChannelLayout layout;
++            av_channel_layout_default(&layout, avstream->codecpar->ch_layout.nb_channels);
++            channel_layout = layout.u.mask;
+           }
+ 
+           if (avstream->duration == AV_NOPTS_VALUE || duration_guessed_from_bitrate) {
+@@ -557,12 +560,20 @@
+     return false;
+   }
+ 
++  AVChannelLayout param_layout;
++  av_channel_layout_from_mask(&param_layout, params.channel_layout());
++
++  AVChannelLayout in_layout;
++  av_channel_layout_from_mask(&in_layout, channel_layout);
++ 
+   // Create resampling context
+-  SwrContext* resampler = swr_alloc_set_opts(nullptr,
+-                                             params.channel_layout(),
++ SwrContext* resampler = NULL;
++ 
++ swr_alloc_set_opts2(&resampler,
++                                             &param_layout,
+                                              FFmpegUtils::GetFFmpegSampleFormat(params.format()),
+                                              params.sample_rate(),
+-                                             channel_layout,
++                                             &in_layout,
+                                              static_cast<AVSampleFormat>(instance_.avstream()->codecpar->format),
+                                              instance_.avstream()->codecpar->sample_rate,
+                                              0,
+@@ -691,11 +702,13 @@
+ 
+ uint64_t FFmpegDecoder::ValidateChannelLayout(AVStream* stream)
+ {
+-  if (stream->codecpar->channel_layout) {
+-    return stream->codecpar->channel_layout;
++  if (stream->codecpar->ch_layout.u.mask) {
++    return stream->codecpar->ch_layout.u.mask;
+   }
+ 
+-  return av_get_default_channel_layout(stream->codecpar->channels);
++  AVChannelLayout layout;
++  av_channel_layout_default(&layout, stream->codecpar->ch_layout.nb_channels);
++  return layout.u.mask;
+ }
+ 
+ const char *FFmpegDecoder::GetInterlacingModeInFFmpeg(VideoParams::Interlacing interlacing)
+--- olive-master/app/codec/ffmpeg/ffmpegencoder.cpp.orig	2024-04-15 14:53:07.342933293 +0100
++++ olive-master/app/codec/ffmpeg/ffmpegencoder.cpp	2024-04-15 15:46:18.141711067 +0100
+@@ -334,7 +334,7 @@
+   int output_sample_count = input_sample_count ? swr_get_out_samples(audio_resample_ctx_, input_sample_count) : 102400;
+   uint8_t** output_data = nullptr;
+   int output_linesize;
+-  av_samples_alloc_array_and_samples(&output_data, &output_linesize, audio_stream_->codecpar->channels,
++  av_samples_alloc_array_and_samples(&output_data, &output_linesize, audio_stream_->codecpar->ch_layout.nb_channels,
+                                      output_sample_count, static_cast<AVSampleFormat>(audio_stream_->codecpar->format), 0);
+ 
+   // Perform conversion
+@@ -349,7 +349,7 @@
+ 
+       av_samples_copy(audio_frame_->data, output_data, audio_frame_offset_, i,
+                       copy_length,
+-                      audio_frame_->channels, static_cast<AVSampleFormat>(audio_frame_->format));
++                      audio_frame_->ch_layout.nb_channels, static_cast<AVSampleFormat>(audio_frame_->format));
+ 
+       audio_frame_offset_ += copy_length;
+       i += copy_length;
+@@ -690,8 +690,7 @@
+ 
+     // Assume audio stream
+     codec_ctx->sample_rate = params().audio_params().sample_rate();
+-    codec_ctx->channel_layout = params().audio_params().channel_layout();
+-    codec_ctx->channels = av_get_channel_layout_nb_channels(codec_ctx->channel_layout);
++    av_channel_layout_from_mask(&codec_ctx->ch_layout, params().audio_params().channel_layout());
+     codec_ctx->sample_fmt = FFmpegUtils::GetFFmpegSampleFormat(params().audio_params().format());
+     codec_ctx->time_base = {1, codec_ctx->sample_rate};
+ 
+@@ -829,11 +828,15 @@
+   }
+ 
+   // Create resample context
+-  audio_resample_ctx_ = swr_alloc_set_opts(nullptr,
+-                                           static_cast<int64_t>(audio_codec_ctx_->channel_layout),
++
++  AVChannelLayout in_layout;
++  av_channel_layout_from_mask(&in_layout, audio.channel_layout());
++
++  swr_alloc_set_opts2(&audio_resample_ctx_,
++                                           &audio_codec_ctx_->ch_layout,
+                                            audio_codec_ctx_->sample_fmt,
+                                            audio_codec_ctx_->sample_rate,
+-                                           static_cast<int64_t>(audio.channel_layout()),
++                                           &in_layout,
+                                            FFmpegUtils::GetFFmpegSampleFormat(audio.format()),
+                                            audio.sample_rate(),
+                                            0,
+@@ -865,7 +868,7 @@
+     return false;
+   }
+ 
+-  audio_frame_->channel_layout = audio_codec_ctx_->channel_layout;
++  av_channel_layout_copy(&audio_frame_->ch_layout, &audio_codec_ctx_->ch_layout);
+   audio_frame_->format = audio_codec_ctx_->sample_fmt;
+   audio_frame_->nb_samples = audio_max_samples_;
+ 
+--- olive-master/app/audio/audioprocessor.cpp.orig	2024-04-15 15:47:00.551754522 +0100
++++ olive-master/app/audio/audioprocessor.cpp	2024-04-15 15:47:23.008727571 +0100
+@@ -169,8 +169,8 @@
+   if (in_frame_) {
+     in_frame_->sample_rate = from.sample_rate();
+     in_frame_->format = from_fmt_;
+-    in_frame_->channel_layout = from.channel_layout();
+-    in_frame_->channels = from.channel_count();
++    in_frame_->ch_layout.u.mask = from.channel_layout();
++    in_frame_->ch_layout.nb_channels = from.channel_count();
+     in_frame_->pts = 0;
+   } else {
+     qCritical() << "Failed to allocate input frame";
