@@ -2,8 +2,8 @@
 
 
 Name:           olive
-Version:        0.2024.01.10
-Release:        6
+Version:        20221024
+Release:        1
 Summary:        Olive is a free non-linear video editor for Windows, macOS, and Linux.
 License:        GPL3
 Group:          Video
@@ -44,7 +44,7 @@ BuildRequires:	cmake ninja
 Olive is a free non-linear video editor for Windows, macOS, and Linux.
 
 %prep
-%setup -n %{name}-%{branch}
+%setup -n olive-master
 tar xf %{S:1}
 tar xf %{S:2}
 rmdir ext/KDDockWidgets ext/core
