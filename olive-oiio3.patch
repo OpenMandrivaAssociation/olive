@@ -1,9 +1,6 @@
-OpenImageIO 3 read_image requires subimage/miplevel/channel range.
-
---- a/app/codec/oiio/oiiodecoder.cpp
-+++ b/app/codec/oiio/oiiodecoder.cpp
+--- a/app/codec/oiio/oiiodecoder.cpp	2026-08-15 01:33:22.424354966 +0200
++++ b/app/codec/oiio/oiiodecoder.cpp	2026-08-15 01:33:22.424401357 +0200
 @@ -134,10 +134,10 @@
-     buffer_.allocate();
  
      if (p.divider == 1) {
        // Just upload straight to the buffer
