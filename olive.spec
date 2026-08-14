@@ -2,8 +2,8 @@
 
 
 Name:           olive
-Version:        20221024
-Release:        2
+Version:        0.2024.01.10
+Release:        3
 Summary:        Olive is a free non-linear video editor for Windows, macOS, and Linux.
 License:        GPL3
 Group:          Video
@@ -15,7 +15,7 @@ Source1:	https://github.com/olive-editor/KDDockWidgets/archive/8d2d0a5764f8393cc
 Source2:	https://github.com/olive-editor/core/archive/277792824801495e868580ca86f6e7a1b53e4779.tar.gz
 Patch0:		olive-20230312-static-helper.patch
 Patch1:		core-ffmpeg7.patch
-Patch2:		olive-ffmpeg7.patch
+Patch2:		olive-ffmpeg9.patch
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel
@@ -44,7 +44,7 @@ BuildRequires:	cmake ninja
 Olive is a free non-linear video editor for Windows, macOS, and Linux.
 
 %prep
-%setup -n olive-master
+%setup -n %{name}-%{branch}
 tar xf %{S:1}
 tar xf %{S:2}
 rmdir ext/KDDockWidgets ext/core
@@ -54,7 +54,7 @@ mv core* ext/core
 %cmake -G Ninja
 
 %build
-%ninja_build
+%ninja_build -C build
 
 %install
 %ninja_install -C build
