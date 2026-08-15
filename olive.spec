@@ -17,6 +17,7 @@ Patch0:		olive-20230312-static-helper.patch
 Patch1:		core-ffmpeg7.patch
 Patch2:		olive-ffmpeg9.patch
 Patch3:		olive-oiio3.patch
+Patch4:		olive-ocio-gettexture.patch
 
 BuildRequires:  qt5-devel
 BuildRequires:  qt5-qtbase-devel

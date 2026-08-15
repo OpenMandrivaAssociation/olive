@@ -1,0 +1,12 @@
+--- a/app/render/renderer.cpp	2026-08-15 02:03:14.933872012 +0200
++++ b/app/render/renderer.cpp	2026-08-15 02:03:14.933912353 +0200
+@@ -242,7 +242,8 @@
+       OCIO::GpuShaderDesc::TextureType channel = OCIO::GpuShaderDesc::TEXTURE_RGB_CHANNEL;
+       OCIO::Interpolation interpolation = OCIO::INTERP_LINEAR;
+ 
+-      shader_desc->getTexture(i, tex_name, sampler_name, width, height, channel, interpolation);
++      OCIO::GpuShaderDesc::TextureDimensions dimensions = OCIO::GpuShaderDesc::TEXTURE_2D;
++      shader_desc->getTexture(i, tex_name, sampler_name, width, height, channel, dimensions, interpolation);
+ 
+       if (!tex_name || !*tex_name
+           || !sampler_name || !*sampler_name
